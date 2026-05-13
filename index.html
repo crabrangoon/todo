@@ -1,276 +1,302 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Todo List with Supabase</title>
 
-<style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-  }
+  <meta charset="UTF-8" />
 
-  body {
-    background: #f4f4f4;
-    display: flex;
-    justify-content: center;
-    padding: 40px 20px;
-  }
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
-  .container {
-    width: 100%;
-    max-width: 650px;
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
+  <title>Todo List</title>
 
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
+  <!-- =========================
+       CSS
+  ========================== -->
 
-  /* Tabs */
-  .tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
+  <style>
 
-  .tab {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    background: #ddd;
-    cursor: pointer;
-    font-weight: bold;
-  }
-
-  .tab.active {
-    background: #2563eb;
-    color: white;
-  }
-
-  /* Form */
-  .todo-form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .todo-form input,
-  .todo-form button {
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-  }
-
-  .todo-form input[type="text"] {
-    flex: 2;
-  }
-
-  .todo-form button {
-    background: #10b981;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-
-  /* Todo list */
-  ul {
-    list-style: none;
-  }
-
-  li {
-    background: #f9f9f9;
-    padding: 14px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .task-left {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .completed {
-    text-decoration: line-through;
-    color: gray;
-  }
-
-  .deadline {
-    font-size: 12px;
-    color: #666;
-    margin-top: 3px;
-  }
-
-  .delete-btn {
-    background: #ef4444;
-    color: white;
-    border: none;
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-
-  /* Calendar */
-  .date-wrapper {
-    position: relative;
-    flex: 1;
-  }
-
-  .date-display {
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    cursor: pointer;
-    background: white;
-    color: #666;
-  }
-
-  .calendar {
-    position: absolute;
-    top: 50px;
-    left: 0;
-    width: 260px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 10px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-    z-index: 100;
-  }
-
-  .hidden {
-    display: none;
-  }
-
-  .cal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-  .cal-header button {
-    border: none;
-    background: #eee;
-    padding: 5px 8px;
-    cursor: pointer;
-    border-radius: 6px;
-  }
-
-  .cal-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-    text-align: center;
-    font-size: 12px;
-  }
-
-  .day {
-    padding: 6px;
-    cursor: pointer;
-    border-radius: 6px;
-  }
-
-  .day:hover {
-    background: #eee;
-  }
-
-  .selected {
-    background: #2563eb;
-    color: white;
-  }
-
-  .clear-btn {
-    margin-top: 10px;
-    width: 100%;
-    padding: 6px;
-    border: none;
-    border-radius: 6px;
-    background: #ef4444;
-    color: white;
-    cursor: pointer;
-  }
-
-  /* Categories */
-  .category-tag {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: bold;
-    color: white;
-    margin-top: 4px;
-  }
-
-  .category-Personal { background: #2563eb; }
-  .category-Study { background: #10b981; }
-  .category-Fitness { background: #ef4444; }
-  .category-All { background: #6b7280; }
-
-  /* Mobile */
-  @media (max-width: 600px) {
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
 
     body {
-      padding: 20px 10px;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
     }
 
     .container {
-      padding: 18px;
+      width: 100%;
+      max-width: 650px;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Tabs */
+
     .tabs {
-      flex-wrap: wrap;
-      gap: 8px;
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
     }
 
     .tab {
-      flex: 1 1 calc(50% - 8px);
-      font-size: 14px;
-      padding: 8px;
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #ddd;
+      cursor: pointer;
+      font-weight: bold;
     }
 
+    .tab.active {
+      background: #2563eb;
+      color: white;
+    }
+
+    /* Form */
+
     .todo-form {
-      flex-direction: column;
-      gap: 12px;
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .todo-form input,
+    .todo-form button {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
     }
 
     .todo-form input[type="text"] {
-      width: 100%;
+      flex: 2;
     }
 
-    .date-wrapper {
-      width: 100%;
+    .todo-form button {
+      background: #10b981;
+      color: white;
+      border: none;
+      cursor: pointer;
     }
 
-    .calendar {
-      width: 100%;
-      left: 0;
-      top: 55px;
+    /* Todo list */
+
+    ul {
+      list-style: none;
     }
 
     li {
-      flex-direction: column;
-      align-items: flex-start;
+      background: #f9f9f9;
+      padding: 14px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .task-left {
+      display: flex;
       gap: 10px;
+      align-items: center;
+    }
+
+    .completed {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    .deadline {
+      font-size: 12px;
+      color: #666;
+      margin-top: 3px;
     }
 
     .delete-btn {
-      align-self: flex-end;
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
     }
-  }
-</style>
+
+    /* Calendar */
+
+    .date-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    .date-display {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      cursor: pointer;
+      background: white;
+      color: #666;
+    }
+
+    .calendar {
+      position: absolute;
+      top: 50px;
+      left: 0;
+      width: 260px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      z-index: 100;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .cal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .cal-header button {
+      border: none;
+      background: #eee;
+      padding: 5px 8px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .day {
+      padding: 6px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .day:hover {
+      background: #eee;
+    }
+
+    .selected {
+      background: #2563eb;
+      color: white;
+    }
+
+    .clear-btn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 6px;
+      border: none;
+      border-radius: 6px;
+      background: #ef4444;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* Categories */
+
+    .category-tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: bold;
+      color: white;
+      margin-top: 4px;
+    }
+
+    .category-Personal {
+      background: #2563eb;
+    }
+
+    .category-Study {
+      background: #10b981;
+    }
+
+    .category-Fitness {
+      background: #ef4444;
+    }
+
+    /* Mobile */
+
+    @media (max-width: 600px) {
+
+      body {
+        padding: 20px 10px;
+      }
+
+      .container {
+        padding: 18px;
+      }
+
+      .tabs {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tab {
+        flex: 1 1 calc(50% - 8px);
+        font-size: 14px;
+        padding: 8px;
+      }
+
+      .todo-form {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .todo-form input[type="text"] {
+        width: 100%;
+      }
+
+      .date-wrapper {
+        width: 100%;
+      }
+
+      .calendar {
+        width: 100%;
+        left: 0;
+        top: 55px;
+      }
+
+      li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .delete-btn {
+        align-self: flex-end;
+      }
+    }
+
+  </style>
+
 </head>
 
 <body>
@@ -279,16 +305,50 @@
 
   <h1>Todo List</h1>
 
-  <!-- Tabs -->
+  <!-- =========================
+       TABS
+  ========================== -->
+
   <div class="tabs">
-    <button class="tab active" data-category="All">Show All</button>
-    <button class="tab" data-category="Personal">Personal</button>
-    <button class="tab" data-category="Study">Study</button>
-    <button class="tab" data-category="Fitness">Fitness</button>
+
+    <button
+      class="tab active"
+      data-category="All"
+    >
+      Show All
+    </button>
+
+    <button
+      class="tab"
+      data-category="Personal"
+    >
+      Personal
+    </button>
+
+    <button
+      class="tab"
+      data-category="Study"
+    >
+      Study
+    </button>
+
+    <button
+      class="tab"
+      data-category="Fitness"
+    >
+      Fitness
+    </button>
+
   </div>
 
-  <!-- Form -->
-  <form class="todo-form" id="todoForm">
+  <!-- =========================
+       FORM
+  ========================== -->
+
+  <form
+    class="todo-form"
+    id="todoForm"
+  >
 
     <input
       type="text"
@@ -297,21 +357,46 @@
       required
     >
 
+    <!-- DATE PICKER -->
+
     <div class="date-wrapper">
 
-      <div class="date-display" id="dateDisplay">
+      <div
+        class="date-display"
+        id="dateDisplay"
+      >
         Date (optional)
       </div>
 
-      <div class="calendar hidden" id="calendar">
+      <div
+        class="calendar hidden"
+        id="calendar"
+      >
 
         <div class="cal-header">
-          <button type="button" id="prevMonth">◀</button>
+
+          <button
+            type="button"
+            id="prevMonth"
+          >
+            ◀
+          </button>
+
           <div id="monthLabel"></div>
-          <button type="button" id="nextMonth">▶</button>
+
+          <button
+            type="button"
+            id="nextMonth"
+          >
+            ▶
+          </button>
+
         </div>
 
-        <div class="cal-grid" id="calGrid"></div>
+        <div
+          class="cal-grid"
+          id="calGrid"
+        ></div>
 
         <button
           type="button"
@@ -322,356 +407,475 @@
         </button>
 
       </div>
+
     </div>
 
-    <button type="submit">Add</button>
+    <button type="submit">
+      Add
+    </button>
 
   </form>
 
-  <!-- Todo List -->
+  <!-- =========================
+       TODO LIST
+  ========================== -->
+
   <ul id="todoList"></ul>
 
 </div>
 
+<!-- =========================
+     SUPABASE APP
+========================== -->
+
 <script type="module">
 
-import { createClient }
-from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  import { createClient }
+  from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-/* =================================
-   SUPABASE CONFIG
-================================= */
+  /* =========================
+     SUPABASE CONFIG
+  ========================== */
 
-const SUPABASE_URL =
-  "https://sfgkedcbxroqogchllsx.supabase.co";
+  const SUPABASE_URL =
+    "https://sfgkedcbxroqogchllsx.supabase.co";
 
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmZ2tlZGNieHJvcW9nY2hsbHN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzE3MTgsImV4cCI6MjA5NDI0NzcxOH0.bKIESB5xzI0lOp_DWyqr7R4Pi6Hbsl-BvMmfR9a61Uk";
+  const SUPABASE_ANON_KEY =
+    "";
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmZ2tlZGNieHJvcW9nY2hsbHN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzE3MTgsImV4cCI6MjA5NDI0NzcxOH0.bKIESB5xzI0lOp_DWyqr7R4Pi6Hbsl-BvMmfR9a61Uk
+  const supabase =
+    createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
 
-const supabase =
-  createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
+  /* =========================
+     STATE
+  ========================== */
 
-/* =================================
-   STATE
-================================= */
+  let currentCategory = "All";
 
-let currentCategory = "All";
-let selectedDate = "";
-let current = new Date();
+  let selectedDate = "";
 
-/* =================================
-   FETCH TODOS
-================================= */
+  let current = new Date();
 
-async function getTodos() {
+  /* =========================
+     FETCH TODOS
+  ========================== */
 
-  const { data, error } = await supabase
-    .from("todos")
-    .select("*")
-    .order("id", { ascending: false });
+  async function getTodos() {
 
-  if (error) {
-    console.error(error);
-    return [];
+    const {
+      data,
+      error
+    } = await supabase
+      .from("todos")
+      .select("*")
+      .order("id", {
+        ascending: false
+      });
+
+    if (error) {
+      console.error(error);
+      return [];
+    }
+
+    return data;
   }
 
-  return data;
-}
+  /* =========================
+     RENDER TODOS
+  ========================== */
 
-/* =================================
-   RENDER TODOS
-================================= */
+  async function renderTodos() {
 
-async function renderTodos() {
+    const list =
+      document.getElementById("todoList");
 
-  const list =
-    document.getElementById("todoList");
+    const todos =
+      await getTodos();
 
-  const todos = await getTodos();
+    const filtered =
+      currentCategory === "All"
+        ? todos
+        : todos.filter(
+            t =>
+              t.category === currentCategory
+          );
 
-  const filtered =
-    currentCategory === "All"
-      ? todos
-      : todos.filter(
-          t => t.category === currentCategory
-        );
+    list.innerHTML = "";
 
-  list.innerHTML = "";
+    filtered.forEach(todo => {
 
-  filtered.forEach(todo => {
+      const li =
+        document.createElement("li");
 
-    const li = document.createElement("li");
+      li.innerHTML = `
 
-    li.innerHTML = `
-      <div class="task-left">
+        <div class="task-left">
 
-        <input
-          type="checkbox"
-          ${todo.completed ? "checked" : ""}
-        >
+          <input
+            type="checkbox"
+            ${todo.completed ? "checked" : ""}
+          >
 
-        <div>
+          <div>
 
-          <div class="${
-            todo.completed ? "completed" : ""
-          }">
-            ${todo.text}
-          </div>
+            <div class="${
+              todo.completed
+                ? "completed"
+                : ""
+            }">
 
-          ${
-            todo.deadline
-              ? `<div class="deadline">${todo.deadline}</div>`
-              : ""
-          }
+              ${todo.text}
 
-          <div class="category-tag category-${todo.category}">
-            ${todo.category}
+            </div>
+
+            ${
+              todo.deadline
+                ? `
+                  <div class="deadline">
+                    ${todo.deadline}
+                  </div>
+                `
+                : ""
+            }
+
+            <div
+              class="category-tag category-${todo.category}"
+            >
+              ${todo.category}
+            </div>
+
           </div>
 
         </div>
-      </div>
 
-      <button class="delete-btn">
-        X
-      </button>
-    `;
+        <button class="delete-btn">
+          X
+        </button>
 
-    /* TOGGLE COMPLETE */
-    li.querySelector("input")
-      .addEventListener("change", async () => {
+      `;
 
-        const { error } = await supabase
-          .from("todos")
-          .update({
-            completed: !todo.completed
-          })
-          .eq("id", todo.id);
+      /* TOGGLE COMPLETE */
 
-        if (error) {
-          console.error(error);
-        }
+      li.querySelector("input")
+        .addEventListener(
+          "change",
+          async () => {
 
-        renderTodos();
-      });
+            const { error } =
+              await supabase
+                .from("todos")
+                .update({
+                  completed:
+                    !todo.completed
+                })
+                .eq("id", todo.id);
 
-    /* DELETE */
-    li.querySelector(".delete-btn")
-      .addEventListener("click", async () => {
+            if (error) {
+              console.error(error);
+            }
 
-        const { error } = await supabase
-          .from("todos")
-          .delete()
-          .eq("id", todo.id);
-
-        if (error) {
-          console.error(error);
-        }
-
-        renderTodos();
-      });
-
-    list.appendChild(li);
-  });
-}
-
-/* =================================
-   ADD TODO
-================================= */
-
-async function addTodo(text) {
-
-  const category =
-    currentCategory === "All"
-      ? "Personal"
-      : currentCategory;
-
-  const { error } = await supabase
-    .from("todos")
-    .insert([
-      {
-        text,
-        deadline: selectedDate || "",
-        category,
-        completed: false
-      }
-    ]);
-
-  if (error) {
-    console.error(error);
-    return;
-  }
-
-  renderTodos();
-}
-
-/* =================================
-   TABS
-================================= */
-
-document
-  .querySelectorAll(".tab")
-  .forEach(tab => {
-
-    tab.addEventListener("click", () => {
-
-      document
-        .querySelectorAll(".tab")
-        .forEach(t =>
-          t.classList.remove("active")
+            renderTodos();
+          }
         );
 
-      tab.classList.add("active");
+      /* DELETE */
 
-      currentCategory =
-        tab.dataset.category;
+      li.querySelector(".delete-btn")
+        .addEventListener(
+          "click",
+          async () => {
 
-      renderTodos();
+            const { error } =
+              await supabase
+                .from("todos")
+                .delete()
+                .eq("id", todo.id);
+
+            if (error) {
+              console.error(error);
+            }
+
+            renderTodos();
+          }
+        );
+
+      list.appendChild(li);
+
     });
-  });
+  }
 
-/* =================================
-   FORM
-================================= */
+  /* =========================
+     ADD TODO
+  ========================== */
 
-document
-  .getElementById("todoForm")
-  .addEventListener("submit", async e => {
+  async function addTodo(text) {
 
-    e.preventDefault();
+    const category =
+      currentCategory === "All"
+        ? "Personal"
+        : currentCategory;
 
-    const input =
-      document.getElementById("taskInput");
+    const { error } =
+      await supabase
+        .from("todos")
+        .insert([
+          {
+            text,
+            deadline:
+              selectedDate || "",
+            category,
+            completed: false
+          }
+        ]);
 
-    if (!input.value.trim()) return;
-
-    await addTodo(input.value.trim());
-
-    input.value = "";
-  });
-
-/* =================================
-   CALENDAR
-================================= */
-
-const dateDisplay =
-  document.getElementById("dateDisplay");
-
-const calendar =
-  document.getElementById("calendar");
-
-const calGrid =
-  document.getElementById("calGrid");
-
-const monthLabel =
-  document.getElementById("monthLabel");
-
-dateDisplay.onclick = () => {
-  calendar.classList.toggle("hidden");
-};
-
-function format(d) {
-  return d.toISOString().split("T")[0];
-}
-
-function renderCalendar() {
-
-  calGrid.innerHTML = "";
-
-  const year =
-    current.getFullYear();
-
-  const month =
-    current.getMonth();
-
-  monthLabel.textContent =
-    current.toLocaleString("default", {
-      month: "long"
-    }) + " " + year;
-
-  const last =
-    new Date(year, month + 1, 0);
-
-  for (let i = 1; i <= last.getDate(); i++) {
-
-    const d =
-      new Date(year, month, i);
-
-    const iso = format(d);
-
-    const div =
-      document.createElement("div");
-
-    div.className = "day";
-
-    div.textContent = i;
-
-    if (iso === selectedDate) {
-      div.classList.add("selected");
+    if (error) {
+      console.error(error);
+      return;
     }
 
-    div.onclick = () => {
+    renderTodos();
+  }
 
-      selectedDate = iso;
+  /* =========================
+     REALTIME UPDATES
+  ========================== */
 
-      dateDisplay.textContent = iso;
+  supabase
+    .channel("todos-live")
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "todos"
+      },
+      () => {
+        renderTodos();
+      }
+    )
+    .subscribe();
 
-      calendar.classList.add("hidden");
+  /* =========================
+     TABS
+  ========================== */
+
+  document
+    .querySelectorAll(".tab")
+    .forEach(tab => {
+
+      tab.addEventListener(
+        "click",
+        () => {
+
+          document
+            .querySelectorAll(".tab")
+            .forEach(t =>
+              t.classList.remove("active")
+            );
+
+          tab.classList.add("active");
+
+          currentCategory =
+            tab.dataset.category;
+
+          renderTodos();
+        }
+      );
+
+    });
+
+  /* =========================
+     FORM
+  ========================== */
+
+  document
+    .getElementById("todoForm")
+    .addEventListener(
+      "submit",
+      async e => {
+
+        e.preventDefault();
+
+        const input =
+          document.getElementById(
+            "taskInput"
+          );
+
+        if (!input.value.trim()) {
+          return;
+        }
+
+        await addTodo(
+          input.value.trim()
+        );
+
+        input.value = "";
+
+      }
+    );
+
+  /* =========================
+     CALENDAR
+  ========================== */
+
+  const dateDisplay =
+    document.getElementById(
+      "dateDisplay"
+    );
+
+  const calendar =
+    document.getElementById(
+      "calendar"
+    );
+
+  const calGrid =
+    document.getElementById(
+      "calGrid"
+    );
+
+  const monthLabel =
+    document.getElementById(
+      "monthLabel"
+    );
+
+  dateDisplay.onclick = () => {
+    calendar.classList.toggle("hidden");
+  };
+
+  function format(d) {
+
+    return d
+      .toISOString()
+      .split("T")[0];
+  }
+
+  function renderCalendar() {
+
+    calGrid.innerHTML = "";
+
+    const year =
+      current.getFullYear();
+
+    const month =
+      current.getMonth();
+
+    monthLabel.textContent =
+      current.toLocaleString(
+        "default",
+        {
+          month: "long"
+        }
+      ) + " " + year;
+
+    const last =
+      new Date(
+        year,
+        month + 1,
+        0
+      );
+
+    for (
+      let i = 1;
+      i <= last.getDate();
+      i++
+    ) {
+
+      const d =
+        new Date(
+          year,
+          month,
+          i
+        );
+
+      const iso = format(d);
+
+      const div =
+        document.createElement("div");
+
+      div.className = "day";
+
+      div.textContent = i;
+
+      if (iso === selectedDate) {
+        div.classList.add("selected");
+      }
+
+      div.onclick = () => {
+
+        selectedDate = iso;
+
+        dateDisplay.textContent =
+          iso;
+
+        calendar.classList.add(
+          "hidden"
+        );
+
+        renderCalendar();
+      };
+
+      calGrid.appendChild(div);
+    }
+  }
+
+  document
+    .getElementById("prevMonth")
+    .onclick = () => {
+
+      current.setMonth(
+        current.getMonth() - 1
+      );
 
       renderCalendar();
     };
 
-    calGrid.appendChild(div);
-  }
-}
+  document
+    .getElementById("nextMonth")
+    .onclick = () => {
 
-document
-  .getElementById("prevMonth")
-  .onclick = () => {
+      current.setMonth(
+        current.getMonth() + 1
+      );
 
-    current.setMonth(
-      current.getMonth() - 1
-    );
+      renderCalendar();
+    };
 
-    renderCalendar();
-  };
+  document
+    .getElementById("clearDate")
+    .onclick = () => {
 
-document
-  .getElementById("nextMonth")
-  .onclick = () => {
+      selectedDate = "";
 
-    current.setMonth(
-      current.getMonth() + 1
-    );
+      dateDisplay.textContent =
+        "Date (optional)";
+    };
 
-    renderCalendar();
-  };
+  document.addEventListener(
+    "click",
+    e => {
 
-document
-  .getElementById("clearDate")
-  .onclick = () => {
+      if (
+        !e.target.closest(
+          ".date-wrapper"
+        )
+      ) {
+        calendar.classList.add(
+          "hidden"
+        );
+      }
+    }
+  );
 
-    selectedDate = "";
+  /* =========================
+     INIT
+  ========================== */
 
-    dateDisplay.textContent =
-      "Date (optional)";
-  };
+  renderCalendar();
 
-document.addEventListener("click", e => {
-
-  if (!e.target.closest(".date-wrapper")) {
-    calendar.classList.add("hidden");
-  }
-});
-
-/* =================================
-   INIT
-================================= */
-
-renderCalendar();
-renderTodos();
+  renderTodos();
 
 </script>
 
