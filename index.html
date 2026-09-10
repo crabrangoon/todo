@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Todo List with Firebase</title>
+<title>Todo List</title>
 
 <style>
   * {
@@ -34,7 +34,10 @@
     margin-bottom: 20px;
   }
 
-  /* Authentication */
+  /* ================================
+     AUTHENTICATION
+  ================================= */
+
   .auth {
     background: #f9fafb;
     padding: 15px;
@@ -44,16 +47,20 @@
 
   .auth-form {
     display: flex;
+    flex-direction: column;
     gap: 10px;
-    flex-wrap: wrap;
   }
 
   .auth-form input {
-    flex: 1;
-    min-width: 180px;
-    padding: 10px;
+    width: 100%;
+    padding: 11px;
     border: 1px solid #ccc;
     border-radius: 8px;
+  }
+
+  .auth-actions {
+    display: flex;
+    gap: 10px;
   }
 
   .auth-btn {
@@ -62,40 +69,91 @@
     border-radius: 8px;
     cursor: pointer;
     color: white;
+    font-weight: bold;
   }
 
   .login-btn {
     background: #2563eb;
+    flex: 1;
   }
 
   .register-btn {
     background: #10b981;
+    flex: 1;
+  }
+
+  .google-btn {
+    width: 100%;
+    background: #4285f4;
+    margin-top: 10px;
   }
 
   .logout-btn {
+    background: #6b7280;
+  }
+
+  .delete-account-btn {
     background: #ef4444;
   }
 
-  .user-info {
+  .auth-divider {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     gap: 10px;
+    color: #999;
+    font-size: 12px;
+    margin-top: 12px;
   }
 
-  .user-email {
-    font-size: 14px;
-    color: #555;
-    overflow-wrap: anywhere;
+  .auth-divider::before,
+  .auth-divider::after {
+    content: "";
+    height: 1px;
+    background: #ddd;
+    flex: 1;
   }
 
   .auth-message {
     font-size: 13px;
     color: #ef4444;
     margin-top: 10px;
+    line-height: 1.4;
   }
 
-  /* Tabs */
+  .user-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .user-details {
+    min-width: 0;
+  }
+
+  .user-label {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 3px;
+  }
+
+  .user-email {
+    font-size: 14px;
+    color: #333;
+    overflow-wrap: anywhere;
+    font-weight: bold;
+  }
+
+  .user-buttons {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  /* ================================
+     TABS
+  ================================= */
+
   .tabs {
     display: flex;
     gap: 10px;
@@ -117,7 +175,10 @@
     color: white;
   }
 
-  /* Form */
+  /* ================================
+     TODO FORM
+  ================================= */
+
   .todo-form {
     display: flex;
     gap: 10px;
@@ -142,7 +203,10 @@
     cursor: pointer;
   }
 
-  /* Todo list */
+  /* ================================
+     TODO LIST
+  ================================= */
+
   ul {
     list-style: none;
   }
@@ -161,6 +225,11 @@
     display: flex;
     gap: 10px;
     align-items: center;
+    min-width: 0;
+  }
+
+  .task-left > div {
+    min-width: 0;
   }
 
   .completed {
@@ -181,9 +250,13 @@
     padding: 6px 10px;
     border-radius: 6px;
     cursor: pointer;
+    flex-shrink: 0;
   }
 
-  /* Calendar */
+  /* ================================
+     CALENDAR
+  ================================= */
+
   .date-wrapper {
     position: relative;
     flex: 1;
@@ -264,7 +337,10 @@
     cursor: pointer;
   }
 
-  /* Categories */
+  /* ================================
+     CATEGORIES
+  ================================= */
+
   .category-tag {
     display: inline-block;
     padding: 3px 8px;
@@ -295,12 +371,14 @@
     background: purple;
   }
 
-  /* Hide todo application until logged in */
   #todoApp.hidden-app {
     display: none;
   }
 
-  /* Mobile */
+  /* ================================
+     MOBILE
+  ================================= */
+
   @media (max-width: 600px) {
 
     body {
@@ -311,21 +389,21 @@
       padding: 18px;
     }
 
-    .auth-form {
+    .auth-actions {
       flex-direction: column;
-    }
-
-    .auth-form input {
-      width: 100%;
-    }
-
-    .auth-btn {
-      width: 100%;
     }
 
     .user-info {
-      align-items: flex-start;
       flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .user-buttons {
+      width: 100%;
+    }
+
+    .user-buttons .auth-btn {
+      flex: 1;
     }
 
     .tabs {
@@ -381,12 +459,16 @@
        AUTHENTICATION
   ================================= -->
 
-  <div class="auth" id="auth">
+  <div class="auth">
 
-    <!-- Logged out -->
+    <!-- LOGGED OUT -->
+
     <div id="loginArea">
 
-      <form class="auth-form" id="authForm">
+      <form
+        class="auth-form"
+        id="authForm"
+      >
 
         <input
           type="email"
@@ -401,25 +483,42 @@
           id="passwordInput"
           placeholder="Password"
           autocomplete="current-password"
+          minlength="6"
           required
         >
 
-        <button
-          type="submit"
-          class="auth-btn login-btn"
-        >
-          Log In
-        </button>
+        <div class="auth-actions">
 
-        <button
-          type="button"
-          class="auth-btn register-btn"
-          id="registerBtn"
-        >
-          Create Account
-        </button>
+          <button
+            type="submit"
+            class="auth-btn login-btn"
+          >
+            Log In
+          </button>
+
+          <button
+            type="button"
+            class="auth-btn register-btn"
+            id="registerBtn"
+          >
+            Create Account
+          </button>
+
+        </div>
 
       </form>
+
+      <div class="auth-divider">
+        OR
+      </div>
+
+      <button
+        type="button"
+        class="auth-btn google-btn"
+        id="googleLoginBtn"
+      >
+        Continue with Google
+      </button>
 
       <div
         class="auth-message"
@@ -429,7 +528,8 @@
     </div>
 
 
-    <!-- Logged in -->
+    <!-- LOGGED IN -->
+
     <div
       id="userArea"
       style="display:none;"
@@ -437,18 +537,38 @@
 
       <div class="user-info">
 
-        <div class="user-email">
-          Logged in as:
-          <strong id="userEmail"></strong>
+        <div class="user-details">
+
+          <div class="user-label">
+            Logged in as
+          </div>
+
+          <div
+            class="user-email"
+            id="userEmail"
+          ></div>
+
         </div>
 
-        <button
-          type="button"
-          class="auth-btn logout-btn"
-          id="logoutBtn"
-        >
-          Log Out
-        </button>
+        <div class="user-buttons">
+
+          <button
+            type="button"
+            class="auth-btn logout-btn"
+            id="logoutBtn"
+          >
+            Log Out
+          </button>
+
+          <button
+            type="button"
+            class="auth-btn delete-account-btn"
+            id="deleteAccountBtn"
+          >
+            Delete Account
+          </button>
+
+        </div>
 
       </div>
 
@@ -461,9 +581,11 @@
        TODO APPLICATION
   ================================= -->
 
-  <div id="todoApp" class="hidden-app">
+  <div
+    id="todoApp"
+    class="hidden-app"
+  >
 
-    <!-- Tabs -->
     <div class="tabs">
 
       <button
@@ -504,7 +626,6 @@
     </div>
 
 
-    <!-- Form -->
     <form
       class="todo-form"
       id="todoForm"
@@ -575,7 +696,6 @@
     </form>
 
 
-    <!-- Todo List -->
     <ul id="todoList"></ul>
 
   </div>
@@ -604,7 +724,8 @@ import {
   query,
   where,
   orderBy,
-  serverTimestamp
+  serverTimestamp,
+  writeBatch
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 import {
@@ -612,7 +733,13 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
+  deleteUser,
+  reauthenticateWithPopup,
+  EmailAuthProvider,
+  reauthenticateWithCredential
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 
@@ -622,22 +749,22 @@ import {
 
 const firebaseConfig = {
 
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyB3EBZf65HaGn3Tmd0fBeBFA98KND76HrQ",
 
   authDomain:
-    "YOUR_PROJECT_ID.firebaseapp.com",
+    "todosbadfish.firebaseapp.com",
 
   projectId:
-    "YOUR_PROJECT_ID",
+    "todosbadfish",
 
   storageBucket:
-    "YOUR_PROJECT_ID.firebasestorage.app",
+    "todosbadfish.firebasestorage.app",
 
   messagingSenderId:
-    "YOUR_MESSAGING_SENDER_ID",
+    "936700496419",
 
   appId:
-    "YOUR_APP_ID"
+    "1:936700496419:web:9c32490501166a73fcff96"
 
 };
 
@@ -649,18 +776,14 @@ const firebaseConfig = {
 const app =
   initializeApp(firebaseConfig);
 
-
 const db =
   getFirestore(app);
-
 
 const auth =
   getAuth(app);
 
-
-/* =================================
-   TODOS COLLECTION
-================================= */
+const googleProvider =
+  new GoogleAuthProvider();
 
 const todosRef =
   collection(db, "todos");
@@ -731,22 +854,18 @@ document
 
       e.preventDefault();
 
-
       const email =
         document
           .getElementById("emailInput")
           .value
           .trim();
 
-
       const password =
         document
           .getElementById("passwordInput")
           .value;
 
-
       showAuthMessage("");
-
 
       try {
 
@@ -759,7 +878,6 @@ document
       } catch (error) {
 
         console.error(error);
-
 
         showAuthMessage(
           getAuthErrorMessage(
@@ -789,12 +907,10 @@ document
           .value
           .trim();
 
-
       const password =
         document
           .getElementById("passwordInput")
           .value;
-
 
       if (!email || !password) {
 
@@ -805,9 +921,7 @@ document
         return;
       }
 
-
       showAuthMessage("");
-
 
       try {
 
@@ -821,6 +935,49 @@ document
 
         console.error(error);
 
+        showAuthMessage(
+          getAuthErrorMessage(
+            error.code
+          )
+        );
+
+      }
+
+    }
+  );
+
+
+/* =================================
+   GOOGLE LOGIN
+================================= */
+
+document
+  .getElementById("googleLoginBtn")
+  .addEventListener(
+    "click",
+    async () => {
+
+      showAuthMessage("");
+
+      try {
+
+        await signInWithPopup(
+          auth,
+          googleProvider
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        if (
+          error.code ===
+          "auth/popup-closed-by-user"
+        ) {
+
+          return;
+
+        }
 
         showAuthMessage(
           getAuthErrorMessage(
@@ -884,7 +1041,6 @@ onAuthStateChanged(
       userEmail.textContent =
         user.email || "User";
 
-
       renderTodos();
 
     } else {
@@ -938,6 +1094,15 @@ function getAuthErrorMessage(code) {
     case "auth/too-many-requests":
       return "Too many attempts. Please try again later.";
 
+    case "auth/popup-blocked":
+      return "Your browser blocked the Google sign-in popup.";
+
+    case "auth/popup-closed-by-user":
+      return "Google sign-in was cancelled.";
+
+    case "auth/operation-not-allowed":
+      return "This sign-in method is not enabled in Firebase.";
+
     default:
       return "Authentication error. Please try again.";
 
@@ -947,7 +1112,7 @@ function getAuthErrorMessage(code) {
 
 
 /* =================================
-   FETCH TODOS
+   FETCH USER TODOS
 ================================= */
 
 async function getTodos() {
@@ -955,11 +1120,9 @@ async function getTodos() {
   const user =
     auth.currentUser;
 
-
   if (!user) {
     return [];
   }
-
 
   try {
 
@@ -981,10 +1144,8 @@ async function getTodos() {
 
       );
 
-
     const snapshot =
       await getDocs(q);
-
 
     return snapshot.docs.map(
       todo => ({
@@ -1021,10 +1182,8 @@ async function renderTodos() {
       "todoList"
     );
 
-
   const todos =
     await getTodos();
-
 
   const filtered =
 
@@ -1038,9 +1197,7 @@ async function renderTodos() {
             currentCategory
         );
 
-
   list.innerHTML = "";
-
 
   filtered.forEach(todo => {
 
@@ -1048,7 +1205,6 @@ async function renderTodos() {
       document.createElement(
         "li"
       );
-
 
     li.innerHTML = `
 
@@ -1068,13 +1224,10 @@ async function renderTodos() {
               ? "completed"
               : ""
           }">
-
             ${escapeHtml(
               todo.text
             )}
-
           </div>
-
 
           ${
             todo.deadline
@@ -1090,7 +1243,6 @@ async function renderTodos() {
               : ""
           }
 
-
           <div
             class="category-tag category-${escapeHtml(
               todo.category
@@ -1105,11 +1257,9 @@ async function renderTodos() {
 
       </div>
 
-
       <button class="delete-btn">
         X
       </button>
-
     `;
 
 
@@ -1120,6 +1270,11 @@ async function renderTodos() {
       .addEventListener(
         "change",
         async () => {
+
+          const user =
+            auth.currentUser;
+
+          if (!user) return;
 
           try {
 
@@ -1138,7 +1293,6 @@ async function renderTodos() {
 
             );
 
-
             renderTodos();
 
           } catch (error) {
@@ -1154,13 +1308,18 @@ async function renderTodos() {
       );
 
 
-    /* DELETE */
+    /* DELETE TODO */
 
     li
       .querySelector(".delete-btn")
       .addEventListener(
         "click",
         async () => {
+
+          const user =
+            auth.currentUser;
+
+          if (!user) return;
 
           try {
 
@@ -1173,7 +1332,6 @@ async function renderTodos() {
               )
 
             );
-
 
             renderTodos();
 
@@ -1206,11 +1364,9 @@ async function addTodo(text) {
   const user =
     auth.currentUser;
 
-
   if (!user) {
     return;
   }
-
 
   const category =
 
@@ -1219,7 +1375,6 @@ async function addTodo(text) {
       ? "Personal"
 
       : currentCategory;
-
 
   try {
 
@@ -1248,15 +1403,12 @@ async function addTodo(text) {
 
     );
 
-
     selectedDate = "";
-
 
     document.getElementById(
       "dateDisplay"
     ).textContent =
       "Date (optional)";
-
 
     renderTodos();
 
@@ -1273,6 +1425,270 @@ async function addTodo(text) {
 
 
 /* =================================
+   DELETE USER'S TODOS
+================================= */
+
+async function deleteUserTodos(uid) {
+
+  const q =
+    query(
+      todosRef,
+      where(
+        "userId",
+        "==",
+        uid
+      )
+    );
+
+  const snapshot =
+    await getDocs(q);
+
+  if (snapshot.empty) {
+    return;
+  }
+
+  const batch =
+    writeBatch(db);
+
+  snapshot.docs.forEach(
+    todoDoc => {
+
+      batch.delete(
+        todoDoc.ref
+      );
+
+    }
+  );
+
+  await batch.commit();
+
+}
+
+
+/* =================================
+   DELETE ACCOUNT
+================================= */
+
+document
+  .getElementById(
+    "deleteAccountBtn"
+  )
+  .addEventListener(
+    "click",
+    async () => {
+
+      const user =
+        auth.currentUser;
+
+      if (!user) {
+        return;
+      }
+
+
+      const confirmed =
+        window.confirm(
+
+          "Delete your account?\n\n" +
+
+          "This will permanently delete " +
+          "your account and all of your todos.\n\n" +
+
+          "This cannot be undone."
+
+        );
+
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      try {
+
+        /*
+          First delete the user's todos.
+        */
+
+        await deleteUserTodos(
+          user.uid
+        );
+
+
+        /*
+          Then delete the Firebase
+          Authentication account.
+        */
+
+        await deleteUser(user);
+
+
+        alert(
+          "Your account has been deleted."
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Account deletion error:",
+          error
+        );
+
+
+        /*
+          Firebase may require
+          recent authentication.
+        */
+
+        if (
+          error.code ===
+          "auth/requires-recent-login"
+        ) {
+
+          const providerIds =
+            user.providerData.map(
+              provider =>
+                provider.providerId
+            );
+
+
+          /*
+            Google account
+          */
+
+          if (
+            providerIds.includes(
+              "google.com"
+            )
+          ) {
+
+            try {
+
+              await reauthenticateWithPopup(
+                user,
+                googleProvider
+              );
+
+
+              await deleteUserTodos(
+                user.uid
+              );
+
+
+              await deleteUser(
+                user
+              );
+
+
+              alert(
+                "Your account has been deleted."
+              );
+
+
+            } catch (reauthError) {
+
+              console.error(
+                reauthError
+              );
+
+
+              showAuthMessage(
+                "Please sign in with Google again before deleting your account."
+              );
+
+            }
+
+          }
+
+          /*
+            Email/password account
+          */
+
+          else if (
+            providerIds.includes(
+              "password"
+            )
+          ) {
+
+            const password =
+              window.prompt(
+                "For security, enter your password to delete your account:"
+              );
+
+
+            if (!password) {
+              return;
+            }
+
+
+            try {
+
+              const credential =
+                EmailAuthProvider.credential(
+                  user.email,
+                  password
+                );
+
+
+              await reauthenticateWithCredential(
+                user,
+                credential
+              );
+
+
+              await deleteUserTodos(
+                user.uid
+              );
+
+
+              await deleteUser(
+                user
+              );
+
+
+              alert(
+                "Your account has been deleted."
+              );
+
+
+            } catch (reauthError) {
+
+              console.error(
+                reauthError
+              );
+
+
+              alert(
+                "The password was incorrect or account deletion failed."
+              );
+
+            }
+
+          }
+
+          else {
+
+            showAuthMessage(
+              "Please sign in again before deleting your account."
+            );
+
+          }
+
+        } else {
+
+          showAuthMessage(
+            "Could not delete the account. Please try again."
+          );
+
+        }
+
+      }
+
+    }
+  );
+
+
+/* =================================
    ESCAPE HTML
 ================================= */
 
@@ -1286,7 +1702,6 @@ function escapeHtml(value) {
     return "";
 
   }
-
 
   return String(value)
 
@@ -1338,15 +1753,12 @@ document
             )
           );
 
-
         tab.classList.add(
           "active"
         );
 
-
         currentCategory =
           tab.dataset.category;
-
 
         renderTodos();
 
@@ -1368,24 +1780,19 @@ document
 
       e.preventDefault();
 
-
       const input =
         document.getElementById(
           "taskInput"
         );
 
-
       const text =
         input.value.trim();
-
 
       if (!text) {
         return;
       }
 
-
       await addTodo(text);
-
 
       input.value = "";
 
@@ -1402,18 +1809,15 @@ const dateDisplay =
     "dateDisplay"
   );
 
-
 const calendar =
   document.getElementById(
     "calendar"
   );
 
-
 const calGrid =
   document.getElementById(
     "calGrid"
   );
-
 
 const monthLabel =
   document.getElementById(
@@ -1439,7 +1843,6 @@ function format(d) {
   const year =
     d.getFullYear();
 
-
   const month =
     String(
       d.getMonth() + 1
@@ -1448,7 +1851,6 @@ function format(d) {
       "0"
     );
 
-
   const day =
     String(
       d.getDate()
@@ -1456,7 +1858,6 @@ function format(d) {
       2,
       "0"
     );
-
 
   return `${year}-${month}-${day}`;
 
@@ -1471,14 +1872,11 @@ function renderCalendar() {
 
   calGrid.innerHTML = "";
 
-
   const year =
     current.getFullYear();
 
-
   const month =
     current.getMonth();
-
 
   monthLabel.textContent =
 
@@ -1493,14 +1891,12 @@ function renderCalendar() {
 
     + year;
 
-
   const last =
     new Date(
       year,
       month + 1,
       0
     );
-
 
   for (
     let i = 1;
@@ -1515,24 +1911,19 @@ function renderCalendar() {
         i
       );
 
-
     const iso =
       format(d);
-
 
     const div =
       document.createElement(
         "div"
       );
 
-
     div.className =
       "day";
 
-
     div.textContent =
       i;
-
 
     if (
       iso === selectedDate
@@ -1544,26 +1935,21 @@ function renderCalendar() {
 
     }
 
-
     div.onclick = () => {
 
       selectedDate =
         iso;
 
-
       dateDisplay.textContent =
         iso;
-
 
       calendar.classList.add(
         "hidden"
       );
 
-
       renderCalendar();
 
     };
-
 
     calGrid.appendChild(
       div
@@ -1586,7 +1972,6 @@ document
       current.getMonth() - 1
     );
 
-
     renderCalendar();
 
   };
@@ -1604,7 +1989,6 @@ document
       current.getMonth() + 1
     );
 
-
     renderCalendar();
 
   };
@@ -1620,10 +2004,8 @@ document
 
     selectedDate = "";
 
-
     dateDisplay.textContent =
       "Date (optional)";
-
 
     renderCalendar();
 
