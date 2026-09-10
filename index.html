@@ -34,6 +34,67 @@
     margin-bottom: 20px;
   }
 
+  /* Authentication */
+  .auth {
+    background: #f9fafb;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+
+  .auth-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .auth-form input {
+    flex: 1;
+    min-width: 180px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+
+  .auth-btn {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+  }
+
+  .login-btn {
+    background: #2563eb;
+  }
+
+  .register-btn {
+    background: #10b981;
+  }
+
+  .logout-btn {
+    background: #ef4444;
+  }
+
+  .user-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-email {
+    font-size: 14px;
+    color: #555;
+    overflow-wrap: anywhere;
+  }
+
+  .auth-message {
+    font-size: 13px;
+    color: #ef4444;
+    margin-top: 10px;
+  }
+
   /* Tabs */
   .tabs {
     display: flex;
@@ -234,6 +295,11 @@
     background: purple;
   }
 
+  /* Hide todo application until logged in */
+  #todoApp.hidden-app {
+    display: none;
+  }
+
   /* Mobile */
   @media (max-width: 600px) {
 
@@ -243,6 +309,23 @@
 
     .container {
       padding: 18px;
+    }
+
+    .auth-form {
+      flex-direction: column;
+    }
+
+    .auth-form input {
+      width: 100%;
+    }
+
+    .auth-btn {
+      width: 100%;
+    }
+
+    .user-info {
+      align-items: flex-start;
+      flex-direction: column;
     }
 
     .tabs {
@@ -294,92 +377,208 @@
 
   <h1>Todo List</h1>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab active" data-category="All">
-      Show All
-    </button>
+  <!-- ================================
+       AUTHENTICATION
+  ================================= -->
 
-    <button class="tab" data-category="Personal">
-      Personal
-    </button>
+  <div class="auth" id="auth">
 
-    <button class="tab" data-category="Study">
-      Study
-    </button>
+    <!-- Logged out -->
+    <div id="loginArea">
 
-    <button class="tab" data-category="Fitness">
-      Fitness
-    </button>
+      <form class="auth-form" id="authForm">
 
-    <button class="tab" data-category="Business">
-      Business
-    </button>
-  </div>
+        <input
+          type="email"
+          id="emailInput"
+          placeholder="Email"
+          autocomplete="email"
+          required
+        >
 
-  <!-- Form -->
-  <form class="todo-form" id="todoForm">
+        <input
+          type="password"
+          id="passwordInput"
+          placeholder="Password"
+          autocomplete="current-password"
+          required
+        >
 
-    <input
-      type="text"
-      id="taskInput"
-      placeholder="Enter task..."
-      required
-    >
-
-    <div class="date-wrapper">
-
-      <div class="date-display" id="dateDisplay">
-        Date (optional)
-      </div>
-
-      <div class="calendar hidden" id="calendar">
-
-        <div class="cal-header">
-
-          <button
-            type="button"
-            id="prevMonth"
-          >
-            ◀
-          </button>
-
-          <div id="monthLabel"></div>
-
-          <button
-            type="button"
-            id="nextMonth"
-          >
-            ▶
-          </button>
-
-        </div>
-
-        <div
-          class="cal-grid"
-          id="calGrid"
-        ></div>
+        <button
+          type="submit"
+          class="auth-btn login-btn"
+        >
+          Log In
+        </button>
 
         <button
           type="button"
-          class="clear-btn"
-          id="clearDate"
+          class="auth-btn register-btn"
+          id="registerBtn"
         >
-          Clear
+          Create Account
+        </button>
+
+      </form>
+
+      <div
+        class="auth-message"
+        id="authMessage"
+      ></div>
+
+    </div>
+
+
+    <!-- Logged in -->
+    <div
+      id="userArea"
+      style="display:none;"
+    >
+
+      <div class="user-info">
+
+        <div class="user-email">
+          Logged in as:
+          <strong id="userEmail"></strong>
+        </div>
+
+        <button
+          type="button"
+          class="auth-btn logout-btn"
+          id="logoutBtn"
+        >
+          Log Out
         </button>
 
       </div>
 
     </div>
 
-    <button type="submit">
-      Add
-    </button>
+  </div>
 
-  </form>
 
-  <!-- Todo List -->
-  <ul id="todoList"></ul>
+  <!-- ================================
+       TODO APPLICATION
+  ================================= -->
+
+  <div id="todoApp" class="hidden-app">
+
+    <!-- Tabs -->
+    <div class="tabs">
+
+      <button
+        class="tab active"
+        data-category="All"
+      >
+        Show All
+      </button>
+
+      <button
+        class="tab"
+        data-category="Personal"
+      >
+        Personal
+      </button>
+
+      <button
+        class="tab"
+        data-category="Study"
+      >
+        Study
+      </button>
+
+      <button
+        class="tab"
+        data-category="Fitness"
+      >
+        Fitness
+      </button>
+
+      <button
+        class="tab"
+        data-category="Business"
+      >
+        Business
+      </button>
+
+    </div>
+
+
+    <!-- Form -->
+    <form
+      class="todo-form"
+      id="todoForm"
+    >
+
+      <input
+        type="text"
+        id="taskInput"
+        placeholder="Enter task..."
+        required
+      >
+
+      <div class="date-wrapper">
+
+        <div
+          class="date-display"
+          id="dateDisplay"
+        >
+          Date (optional)
+        </div>
+
+        <div
+          class="calendar hidden"
+          id="calendar"
+        >
+
+          <div class="cal-header">
+
+            <button
+              type="button"
+              id="prevMonth"
+            >
+              ◀
+            </button>
+
+            <div id="monthLabel"></div>
+
+            <button
+              type="button"
+              id="nextMonth"
+            >
+              ▶
+            </button>
+
+          </div>
+
+          <div
+            class="cal-grid"
+            id="calGrid"
+          ></div>
+
+          <button
+            type="button"
+            class="clear-btn"
+            id="clearDate"
+          >
+            Clear
+          </button>
+
+        </div>
+
+      </div>
+
+      <button type="submit">
+        Add
+      </button>
+
+    </form>
+
+
+    <!-- Todo List -->
+    <ul id="todoList"></ul>
+
+  </div>
 
 </div>
 
@@ -403,39 +602,42 @@ import {
   deleteDoc,
   doc,
   query,
+  where,
   orderBy,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 
 /* =================================
    FIREBASE CONFIG
 ================================= */
 
-/*
-  Replace these values with the
-  Firebase configuration from your
-  Firebase project.
-*/
-
 const firebaseConfig = {
 
-  apiKey: "AIzaSyB3EBZf65HaGn3Tmd0fBeBFA98KND76HrQ",
+  apiKey: "YOUR_API_KEY",
 
   authDomain:
-    "todosbadfish.firebaseapp.com",
+    "YOUR_PROJECT_ID.firebaseapp.com",
 
   projectId:
-    "todosbadfish",
+    "YOUR_PROJECT_ID",
 
   storageBucket:
-    "todosbadfish.firebasestorage.app",
+    "YOUR_PROJECT_ID.firebasestorage.app",
 
   messagingSenderId:
-    "936700496419",
+    "YOUR_MESSAGING_SENDER_ID",
 
   appId:
-    "1:936700496419:web:9c32490501166a73fcff96"
+    "YOUR_APP_ID"
 
 };
 
@@ -447,8 +649,13 @@ const firebaseConfig = {
 const app =
   initializeApp(firebaseConfig);
 
+
 const db =
   getFirestore(app);
+
+
+const auth =
+  getAuth(app);
 
 
 /* =================================
@@ -471,26 +678,321 @@ let current = new Date();
 
 
 /* =================================
+   DOM
+================================= */
+
+const loginArea =
+  document.getElementById(
+    "loginArea"
+  );
+
+const userArea =
+  document.getElementById(
+    "userArea"
+  );
+
+const todoApp =
+  document.getElementById(
+    "todoApp"
+  );
+
+const authMessage =
+  document.getElementById(
+    "authMessage"
+  );
+
+const userEmail =
+  document.getElementById(
+    "userEmail"
+  );
+
+
+/* =================================
+   AUTH MESSAGE
+================================= */
+
+function showAuthMessage(message) {
+
+  authMessage.textContent =
+    message;
+
+}
+
+
+/* =================================
+   LOGIN
+================================= */
+
+document
+  .getElementById("authForm")
+  .addEventListener(
+    "submit",
+    async e => {
+
+      e.preventDefault();
+
+
+      const email =
+        document
+          .getElementById("emailInput")
+          .value
+          .trim();
+
+
+      const password =
+        document
+          .getElementById("passwordInput")
+          .value;
+
+
+      showAuthMessage("");
+
+
+      try {
+
+        await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+
+        showAuthMessage(
+          getAuthErrorMessage(
+            error.code
+          )
+        );
+
+      }
+
+    }
+  );
+
+
+/* =================================
+   REGISTER
+================================= */
+
+document
+  .getElementById("registerBtn")
+  .addEventListener(
+    "click",
+    async () => {
+
+      const email =
+        document
+          .getElementById("emailInput")
+          .value
+          .trim();
+
+
+      const password =
+        document
+          .getElementById("passwordInput")
+          .value;
+
+
+      if (!email || !password) {
+
+        showAuthMessage(
+          "Enter an email and password first."
+        );
+
+        return;
+      }
+
+
+      showAuthMessage("");
+
+
+      try {
+
+        await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+
+        showAuthMessage(
+          getAuthErrorMessage(
+            error.code
+          )
+        );
+
+      }
+
+    }
+  );
+
+
+/* =================================
+   LOGOUT
+================================= */
+
+document
+  .getElementById("logoutBtn")
+  .addEventListener(
+    "click",
+    async () => {
+
+      try {
+
+        await signOut(auth);
+
+      } catch (error) {
+
+        console.error(
+          "Logout error:",
+          error
+        );
+
+      }
+
+    }
+  );
+
+
+/* =================================
+   AUTH STATE
+================================= */
+
+onAuthStateChanged(
+  auth,
+  user => {
+
+    if (user) {
+
+      loginArea.style.display =
+        "none";
+
+      userArea.style.display =
+        "block";
+
+      todoApp.classList.remove(
+        "hidden-app"
+      );
+
+      userEmail.textContent =
+        user.email || "User";
+
+
+      renderTodos();
+
+    } else {
+
+      loginArea.style.display =
+        "block";
+
+      userArea.style.display =
+        "none";
+
+      todoApp.classList.add(
+        "hidden-app"
+      );
+
+      document.getElementById(
+        "todoList"
+      ).innerHTML = "";
+
+    }
+
+  }
+);
+
+
+/* =================================
+   AUTH ERROR MESSAGES
+================================= */
+
+function getAuthErrorMessage(code) {
+
+  switch (code) {
+
+    case "auth/invalid-email":
+      return "Please enter a valid email address.";
+
+    case "auth/user-not-found":
+      return "No account exists with that email.";
+
+    case "auth/wrong-password":
+      return "Incorrect password.";
+
+    case "auth/invalid-credential":
+      return "Incorrect email or password.";
+
+    case "auth/email-already-in-use":
+      return "An account already exists with that email.";
+
+    case "auth/weak-password":
+      return "Password must be at least 6 characters.";
+
+    case "auth/too-many-requests":
+      return "Too many attempts. Please try again later.";
+
+    default:
+      return "Authentication error. Please try again.";
+
+  }
+
+}
+
+
+/* =================================
    FETCH TODOS
 ================================= */
 
 async function getTodos() {
 
+  const user =
+    auth.currentUser;
+
+
+  if (!user) {
+    return [];
+  }
+
+
   try {
 
     const q =
       query(
+
         todosRef,
-        orderBy("createdAt", "desc")
+
+        where(
+          "userId",
+          "==",
+          user.uid
+        ),
+
+        orderBy(
+          "createdAt",
+          "desc"
+        )
+
       );
+
 
     const snapshot =
       await getDocs(q);
 
+
     return snapshot.docs.map(
       todo => ({
+
         id: todo.id,
+
         ...todo.data()
+
       })
     );
 
@@ -502,7 +1004,9 @@ async function getTodos() {
     );
 
     return [];
+
   }
+
 }
 
 
@@ -513,20 +1017,25 @@ async function getTodos() {
 async function renderTodos() {
 
   const list =
-    document.getElementById("todoList");
+    document.getElementById(
+      "todoList"
+    );
+
 
   const todos =
     await getTodos();
 
 
   const filtered =
+
     currentCategory === "All"
 
       ? todos
 
       : todos.filter(
           todo =>
-            todo.category === currentCategory
+            todo.category ===
+            currentCategory
         );
 
 
@@ -536,7 +1045,9 @@ async function renderTodos() {
   filtered.forEach(todo => {
 
     const li =
-      document.createElement("li");
+      document.createElement(
+        "li"
+      );
 
 
     li.innerHTML = `
@@ -545,7 +1056,9 @@ async function renderTodos() {
 
         <input
           type="checkbox"
-          ${todo.completed ? "checked" : ""}
+          ${todo.completed
+            ? "checked"
+            : ""}
         >
 
         <div>
@@ -556,7 +1069,9 @@ async function renderTodos() {
               : ""
           }">
 
-            ${escapeHtml(todo.text)}
+            ${escapeHtml(
+              todo.text
+            )}
 
           </div>
 
@@ -566,7 +1081,9 @@ async function renderTodos() {
 
               ? `
                 <div class="deadline">
-                  ${escapeHtml(todo.deadline)}
+                  ${escapeHtml(
+                    todo.deadline
+                  )}
                 </div>
               `
 
@@ -579,7 +1096,9 @@ async function renderTodos() {
               todo.category
             )}"
           >
-            ${escapeHtml(todo.category)}
+            ${escapeHtml(
+              todo.category
+            )}
           </div>
 
         </div>
@@ -594,9 +1113,7 @@ async function renderTodos() {
     `;
 
 
-    /* =================================
-       TOGGLE COMPLETE
-    ================================= */
+    /* TOGGLE COMPLETE */
 
     li
       .querySelector("input")
@@ -621,6 +1138,7 @@ async function renderTodos() {
 
             );
 
+
             renderTodos();
 
           } catch (error) {
@@ -636,9 +1154,7 @@ async function renderTodos() {
       );
 
 
-    /* =================================
-       DELETE
-    ================================= */
+    /* DELETE */
 
     li
       .querySelector(".delete-btn")
@@ -657,6 +1173,7 @@ async function renderTodos() {
               )
 
             );
+
 
             renderTodos();
 
@@ -686,9 +1203,21 @@ async function renderTodos() {
 
 async function addTodo(text) {
 
+  const user =
+    auth.currentUser;
+
+
+  if (!user) {
+    return;
+  }
+
+
   const category =
+
     currentCategory === "All"
+
       ? "Personal"
+
       : currentCategory;
 
 
@@ -709,6 +1238,9 @@ async function addTodo(text) {
 
         completed: false,
 
+        userId:
+          user.uid,
+
         createdAt:
           serverTimestamp()
 
@@ -718,6 +1250,7 @@ async function addTodo(text) {
 
 
     selectedDate = "";
+
 
     document.getElementById(
       "dateDisplay"
@@ -745,24 +1278,42 @@ async function addTodo(text) {
 
 function escapeHtml(value) {
 
-  if (value === undefined ||
-      value === null) {
+  if (
+    value === undefined ||
+    value === null
+  ) {
 
     return "";
 
   }
 
+
   return String(value)
 
-    .replaceAll("&", "&amp;")
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
 
-    .replaceAll("<", "&lt;")
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
 
-    .replaceAll(">", "&gt;")
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
 
-    .replaceAll('"', "&quot;")
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
 
-    .replaceAll("'", "&#039;");
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
 
 }
 
@@ -788,7 +1339,9 @@ document
           );
 
 
-        tab.classList.add("active");
+        tab.classList.add(
+          "active"
+        );
 
 
         currentCategory =
@@ -826,7 +1379,9 @@ document
         input.value.trim();
 
 
-      if (!text) return;
+      if (!text) {
+        return;
+      }
 
 
       await addTodo(text);
@@ -884,15 +1439,24 @@ function format(d) {
   const year =
     d.getFullYear();
 
+
   const month =
     String(
       d.getMonth() + 1
-    ).padStart(2, "0");
+    ).padStart(
+      2,
+      "0"
+    );
+
 
   const day =
     String(
       d.getDate()
-    ).padStart(2, "0");
+    ).padStart(
+      2,
+      "0"
+    );
+
 
   return `${year}-${month}-${day}`;
 
@@ -962,10 +1526,12 @@ function renderCalendar() {
       );
 
 
-    div.className = "day";
+    div.className =
+      "day";
 
 
-    div.textContent = i;
+    div.textContent =
+      i;
 
 
     if (
@@ -981,7 +1547,8 @@ function renderCalendar() {
 
     div.onclick = () => {
 
-      selectedDate = iso;
+      selectedDate =
+        iso;
 
 
       dateDisplay.textContent =
@@ -998,7 +1565,9 @@ function renderCalendar() {
     };
 
 
-    calGrid.appendChild(div);
+    calGrid.appendChild(
+      div
+    );
 
   }
 
@@ -1017,6 +1586,7 @@ document
       current.getMonth() - 1
     );
 
+
     renderCalendar();
 
   };
@@ -1033,6 +1603,7 @@ document
     current.setMonth(
       current.getMonth() + 1
     );
+
 
     renderCalendar();
 
@@ -1088,8 +1659,6 @@ document.addEventListener(
 ================================= */
 
 renderCalendar();
-
-renderTodos();
 
 </script>
 
