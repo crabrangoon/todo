@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Todo List with Supabase</title>
+<title>Todo List with Firebase</title>
 
 <style>
   * {
@@ -214,10 +214,25 @@
     margin-top: 4px;
   }
 
-  .category-Personal { background: #2563eb; }
-  .category-Study { background: #10b981; }
-  .category-Fitness { background: #ef4444; }
-  .category-All { background: #6b7280; }
+  .category-Personal {
+    background: #2563eb;
+  }
+
+  .category-Study {
+    background: #10b981;
+  }
+
+  .category-Fitness {
+    background: #ef4444;
+  }
+
+  .category-All {
+    background: #6b7280;
+  }
+
+  .category-Business {
+    background: purple;
+  }
 
   /* Mobile */
   @media (max-width: 600px) {
@@ -281,10 +296,25 @@
 
   <!-- Tabs -->
   <div class="tabs">
-    <button class="tab active" data-category="All">Show All</button>
-    <button class="tab" data-category="Personal">Personal</button>
-    <button class="tab" data-category="Study">Study</button>
-    <button class="tab" data-category="Fitness">Fitness</button>
+    <button class="tab active" data-category="All">
+      Show All
+    </button>
+
+    <button class="tab" data-category="Personal">
+      Personal
+    </button>
+
+    <button class="tab" data-category="Study">
+      Study
+    </button>
+
+    <button class="tab" data-category="Fitness">
+      Fitness
+    </button>
+
+    <button class="tab" data-category="Business">
+      Business
+    </button>
   </div>
 
   <!-- Form -->
@@ -306,12 +336,29 @@
       <div class="calendar hidden" id="calendar">
 
         <div class="cal-header">
-          <button type="button" id="prevMonth">◀</button>
+
+          <button
+            type="button"
+            id="prevMonth"
+          >
+            ◀
+          </button>
+
           <div id="monthLabel"></div>
-          <button type="button" id="nextMonth">▶</button>
+
+          <button
+            type="button"
+            id="nextMonth"
+          >
+            ▶
+          </button>
+
         </div>
 
-        <div class="cal-grid" id="calGrid"></div>
+        <div
+          class="cal-grid"
+          id="calGrid"
+        ></div>
 
         <button
           type="button"
@@ -322,9 +369,12 @@
         </button>
 
       </div>
+
     </div>
 
-    <button type="submit">Add</button>
+    <button type="submit">
+      Add
+    </button>
 
   </form>
 
@@ -333,34 +383,92 @@
 
 </div>
 
+
 <script type="module">
 
-import { createClient }
-from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
 /* =================================
-   SUPABASE CONFIG
+   FIREBASE IMPORTS
 ================================= */
 
-const SUPABASE_URL =
-  "https://sfgkedcbxroqogchllsx.supabase.co";
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmZ2tlZGNieHJvcW9nY2hsbHN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzE3MTgsImV4cCI6MjA5NDI0NzcxOH0.bKIESB5xzI0lOp_DWyqr7R4Pi6Hbsl-BvMmfR9a61Uk";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  orderBy,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-const supabase =
-  createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
+
+/* =================================
+   FIREBASE CONFIG
+================================= */
+
+/*
+  Replace these values with the
+  Firebase configuration from your
+  Firebase project.
+*/
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyB3EBZf65HaGn3Tmd0fBeBFA98KND76HrQ",
+
+  authDomain:
+    "todosbadfish.firebaseapp.com",
+
+  projectId:
+    "todosbadfish",
+
+  storageBucket:
+    "todosbadfish.firebasestorage.app",
+
+  messagingSenderId:
+    "936700496419",
+
+  appId:
+    "1:936700496419:web:9c32490501166a73fcff96"
+
+};
+
+
+/* =================================
+   INITIALIZE FIREBASE
+================================= */
+
+const app =
+  initializeApp(firebaseConfig);
+
+const db =
+  getFirestore(app);
+
+
+/* =================================
+   TODOS COLLECTION
+================================= */
+
+const todosRef =
+  collection(db, "todos");
+
 
 /* =================================
    STATE
 ================================= */
 
 let currentCategory = "All";
+
 let selectedDate = "";
+
 let current = new Date();
+
 
 /* =================================
    FETCH TODOS
@@ -368,18 +476,35 @@ let current = new Date();
 
 async function getTodos() {
 
-  const { data, error } = await supabase
-    .from("todos")
-    .select("*")
-    .order("id", { ascending: false });
+  try {
 
-  if (error) {
-    console.error(error);
+    const q =
+      query(
+        todosRef,
+        orderBy("createdAt", "desc")
+      );
+
+    const snapshot =
+      await getDocs(q);
+
+    return snapshot.docs.map(
+      todo => ({
+        id: todo.id,
+        ...todo.data()
+      })
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Error loading todos:",
+      error
+    );
+
     return [];
   }
-
-  return data;
 }
+
 
 /* =================================
    RENDER TODOS
@@ -390,22 +515,32 @@ async function renderTodos() {
   const list =
     document.getElementById("todoList");
 
-  const todos = await getTodos();
+  const todos =
+    await getTodos();
+
 
   const filtered =
     currentCategory === "All"
+
       ? todos
+
       : todos.filter(
-          t => t.category === currentCategory
+          todo =>
+            todo.category === currentCategory
         );
+
 
   list.innerHTML = "";
 
+
   filtered.forEach(todo => {
 
-    const li = document.createElement("li");
+    const li =
+      document.createElement("li");
+
 
     li.innerHTML = `
+
       <div class="task-left">
 
         <input
@@ -416,66 +551,134 @@ async function renderTodos() {
         <div>
 
           <div class="${
-            todo.completed ? "completed" : ""
+            todo.completed
+              ? "completed"
+              : ""
           }">
-            ${todo.text}
+
+            ${escapeHtml(todo.text)}
+
           </div>
+
 
           ${
             todo.deadline
-              ? `<div class="deadline">${todo.deadline}</div>`
+
+              ? `
+                <div class="deadline">
+                  ${escapeHtml(todo.deadline)}
+                </div>
+              `
+
               : ""
           }
 
-          <div class="category-tag category-${todo.category}">
-            ${todo.category}
+
+          <div
+            class="category-tag category-${escapeHtml(
+              todo.category
+            )}"
+          >
+            ${escapeHtml(todo.category)}
           </div>
 
         </div>
+
       </div>
+
 
       <button class="delete-btn">
         X
       </button>
+
     `;
 
-    /* TOGGLE COMPLETE */
-    li.querySelector("input")
-      .addEventListener("change", async () => {
 
-        const { error } = await supabase
-          .from("todos")
-          .update({
-            completed: !todo.completed
-          })
-          .eq("id", todo.id);
+    /* =================================
+       TOGGLE COMPLETE
+    ================================= */
 
-        if (error) {
-          console.error(error);
+    li
+      .querySelector("input")
+      .addEventListener(
+        "change",
+        async () => {
+
+          try {
+
+            await updateDoc(
+
+              doc(
+                db,
+                "todos",
+                todo.id
+              ),
+
+              {
+                completed:
+                  !todo.completed
+              }
+
+            );
+
+            renderTodos();
+
+          } catch (error) {
+
+            console.error(
+              "Error updating todo:",
+              error
+            );
+
+          }
+
         }
+      );
 
-        renderTodos();
-      });
 
-    /* DELETE */
-    li.querySelector(".delete-btn")
-      .addEventListener("click", async () => {
+    /* =================================
+       DELETE
+    ================================= */
 
-        const { error } = await supabase
-          .from("todos")
-          .delete()
-          .eq("id", todo.id);
+    li
+      .querySelector(".delete-btn")
+      .addEventListener(
+        "click",
+        async () => {
 
-        if (error) {
-          console.error(error);
+          try {
+
+            await deleteDoc(
+
+              doc(
+                db,
+                "todos",
+                todo.id
+              )
+
+            );
+
+            renderTodos();
+
+          } catch (error) {
+
+            console.error(
+              "Error deleting todo:",
+              error
+            );
+
+          }
+
         }
+      );
 
-        renderTodos();
-      });
 
     list.appendChild(li);
+
   });
+
 }
+
 
 /* =================================
    ADD TODO
@@ -488,24 +691,81 @@ async function addTodo(text) {
       ? "Personal"
       : currentCategory;
 
-  const { error } = await supabase
-    .from("todos")
-    .insert([
-      {
-        text,
-        deadline: selectedDate || "",
-        category,
-        completed: false
-      }
-    ]);
 
-  if (error) {
-    console.error(error);
-    return;
+  try {
+
+    await addDoc(
+
+      todosRef,
+
+      {
+
+        text,
+
+        deadline:
+          selectedDate || "",
+
+        category,
+
+        completed: false,
+
+        createdAt:
+          serverTimestamp()
+
+      }
+
+    );
+
+
+    selectedDate = "";
+
+    document.getElementById(
+      "dateDisplay"
+    ).textContent =
+      "Date (optional)";
+
+
+    renderTodos();
+
+  } catch (error) {
+
+    console.error(
+      "Error adding todo:",
+      error
+    );
+
   }
 
-  renderTodos();
 }
+
+
+/* =================================
+   ESCAPE HTML
+================================= */
+
+function escapeHtml(value) {
+
+  if (value === undefined ||
+      value === null) {
+
+    return "";
+
+  }
+
+  return String(value)
+
+    .replaceAll("&", "&amp;")
+
+    .replaceAll("<", "&lt;")
+
+    .replaceAll(">", "&gt;")
+
+    .replaceAll('"', "&quot;")
+
+    .replaceAll("'", "&#039;");
+
+}
+
 
 /* =================================
    TABS
@@ -515,22 +775,33 @@ document
   .querySelectorAll(".tab")
   .forEach(tab => {
 
-    tab.addEventListener("click", () => {
+    tab.addEventListener(
+      "click",
+      () => {
 
-      document
-        .querySelectorAll(".tab")
-        .forEach(t =>
-          t.classList.remove("active")
-        );
+        document
+          .querySelectorAll(".tab")
+          .forEach(t =>
+            t.classList.remove(
+              "active"
+            )
+          );
 
-      tab.classList.add("active");
 
-      currentCategory =
-        tab.dataset.category;
+        tab.classList.add("active");
 
-      renderTodos();
-    });
+
+        currentCategory =
+          tab.dataset.category;
+
+
+        renderTodos();
+
+      }
+    );
+
   });
+
 
 /* =================================
    FORM
@@ -538,94 +809,205 @@ document
 
 document
   .getElementById("todoForm")
-  .addEventListener("submit", async e => {
+  .addEventListener(
+    "submit",
+    async e => {
 
-    e.preventDefault();
+      e.preventDefault();
 
-    const input =
-      document.getElementById("taskInput");
 
-    if (!input.value.trim()) return;
+      const input =
+        document.getElementById(
+          "taskInput"
+        );
 
-    await addTodo(input.value.trim());
 
-    input.value = "";
-  });
+      const text =
+        input.value.trim();
+
+
+      if (!text) return;
+
+
+      await addTodo(text);
+
+
+      input.value = "";
+
+    }
+  );
+
 
 /* =================================
    CALENDAR
 ================================= */
 
 const dateDisplay =
-  document.getElementById("dateDisplay");
+  document.getElementById(
+    "dateDisplay"
+  );
+
 
 const calendar =
-  document.getElementById("calendar");
+  document.getElementById(
+    "calendar"
+  );
+
 
 const calGrid =
-  document.getElementById("calGrid");
+  document.getElementById(
+    "calGrid"
+  );
+
 
 const monthLabel =
-  document.getElementById("monthLabel");
+  document.getElementById(
+    "monthLabel"
+  );
+
 
 dateDisplay.onclick = () => {
-  calendar.classList.toggle("hidden");
+
+  calendar.classList.toggle(
+    "hidden"
+  );
+
 };
 
+
+/* =================================
+   DATE FORMAT
+================================= */
+
 function format(d) {
-  return d.toISOString().split("T")[0];
+
+  const year =
+    d.getFullYear();
+
+  const month =
+    String(
+      d.getMonth() + 1
+    ).padStart(2, "0");
+
+  const day =
+    String(
+      d.getDate()
+    ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+
 }
+
+
+/* =================================
+   RENDER CALENDAR
+================================= */
 
 function renderCalendar() {
 
   calGrid.innerHTML = "";
 
+
   const year =
     current.getFullYear();
+
 
   const month =
     current.getMonth();
 
+
   monthLabel.textContent =
-    current.toLocaleString("default", {
-      month: "long"
-    }) + " " + year;
+
+    current.toLocaleString(
+      "default",
+      {
+        month: "long"
+      }
+    )
+
+    + " "
+
+    + year;
+
 
   const last =
-    new Date(year, month + 1, 0);
+    new Date(
+      year,
+      month + 1,
+      0
+    );
 
-  for (let i = 1; i <= last.getDate(); i++) {
+
+  for (
+    let i = 1;
+    i <= last.getDate();
+    i++
+  ) {
 
     const d =
-      new Date(year, month, i);
+      new Date(
+        year,
+        month,
+        i
+      );
 
-    const iso = format(d);
+
+    const iso =
+      format(d);
+
 
     const div =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
+
 
     div.className = "day";
 
+
     div.textContent = i;
 
-    if (iso === selectedDate) {
-      div.classList.add("selected");
+
+    if (
+      iso === selectedDate
+    ) {
+
+      div.classList.add(
+        "selected"
+      );
+
     }
+
 
     div.onclick = () => {
 
       selectedDate = iso;
 
-      dateDisplay.textContent = iso;
 
-      calendar.classList.add("hidden");
+      dateDisplay.textContent =
+        iso;
+
+
+      calendar.classList.add(
+        "hidden"
+      );
+
 
       renderCalendar();
+
     };
 
+
     calGrid.appendChild(div);
+
   }
+
 }
+
+
+/* =================================
+   PREVIOUS MONTH
+================================= */
 
 document
   .getElementById("prevMonth")
@@ -636,7 +1018,13 @@ document
     );
 
     renderCalendar();
+
   };
+
+
+/* =================================
+   NEXT MONTH
+================================= */
 
 document
   .getElementById("nextMonth")
@@ -647,7 +1035,13 @@ document
     );
 
     renderCalendar();
+
   };
+
+
+/* =================================
+   CLEAR DATE
+================================= */
 
 document
   .getElementById("clearDate")
@@ -655,22 +1049,46 @@ document
 
     selectedDate = "";
 
+
     dateDisplay.textContent =
       "Date (optional)";
+
+
+    renderCalendar();
+
   };
 
-document.addEventListener("click", e => {
 
-  if (!e.target.closest(".date-wrapper")) {
-    calendar.classList.add("hidden");
+/* =================================
+   CLOSE CALENDAR
+================================= */
+
+document.addEventListener(
+  "click",
+  e => {
+
+    if (
+      !e.target.closest(
+        ".date-wrapper"
+      )
+    ) {
+
+      calendar.classList.add(
+        "hidden"
+      );
+
+    }
+
   }
-});
+);
+
 
 /* =================================
    INIT
 ================================= */
 
 renderCalendar();
+
 renderTodos();
 
 </script>
