@@ -455,127 +455,6 @@
 
   <h1>Todo List</h1>
 
-  <!-- ================================
-       AUTHENTICATION
-  ================================= -->
-
-  <div class="auth">
-
-    <!-- LOGGED OUT -->
-
-    <div id="loginArea">
-
-      <form
-        class="auth-form"
-        id="authForm"
-      >
-
-        <input
-          type="email"
-          id="emailInput"
-          placeholder="Email"
-          autocomplete="email"
-          required
-        >
-
-        <input
-          type="password"
-          id="passwordInput"
-          placeholder="Password"
-          autocomplete="current-password"
-          minlength="6"
-          required
-        >
-
-        <div class="auth-actions">
-
-          <button
-            type="submit"
-            class="auth-btn login-btn"
-          >
-            Log In
-          </button>
-
-          <button
-            type="button"
-            class="auth-btn register-btn"
-            id="registerBtn"
-          >
-            Create Account
-          </button>
-
-        </div>
-
-      </form>
-
-      <div class="auth-divider">
-        OR
-      </div>
-
-      <button
-        type="button"
-        class="auth-btn google-btn"
-        id="googleLoginBtn"
-      >
-        Continue with Google
-      </button>
-
-      <div
-        class="auth-message"
-        id="authMessage"
-      ></div>
-
-    </div>
-
-
-    <!-- LOGGED IN -->
-
-    <div
-      id="userArea"
-      style="display:none;"
-    >
-
-      <div class="user-info">
-
-        <div class="user-details">
-
-          <div class="user-label">
-            Logged in as
-          </div>
-
-          <div
-            class="user-email"
-            id="userEmail"
-          ></div>
-
-        </div>
-
-        <div class="user-buttons">
-
-          <button
-            type="button"
-            class="auth-btn logout-btn"
-            id="logoutBtn"
-          >
-            Log Out
-          </button>
-
-          <button
-            type="button"
-            class="auth-btn delete-account-btn"
-            id="deleteAccountBtn"
-          >
-            Delete Account
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
 
   <!-- ================================
        TODO APPLICATION
@@ -697,6 +576,129 @@
 
 
     <ul id="todoList"></ul>
+
+  </div>
+
+
+  <!-- ================================
+       AUTHENTICATION
+       ALWAYS AT BOTTOM
+  ================================= -->
+
+  <div class="auth">
+
+    <!-- LOGGED OUT -->
+
+    <div id="loginArea">
+
+      <form
+        class="auth-form"
+        id="authForm"
+      >
+
+        <input
+          type="email"
+          id="emailInput"
+          placeholder="Email"
+          autocomplete="email"
+          required
+        >
+
+        <input
+          type="password"
+          id="passwordInput"
+          placeholder="Password"
+          autocomplete="current-password"
+          minlength="6"
+          required
+        >
+
+        <div class="auth-actions">
+
+          <button
+            type="submit"
+            class="auth-btn login-btn"
+          >
+            Log In
+          </button>
+
+          <button
+            type="button"
+            class="auth-btn register-btn"
+            id="registerBtn"
+          >
+            Create Account
+          </button>
+
+        </div>
+
+      </form>
+
+      <div class="auth-divider">
+        OR
+      </div>
+
+      <button
+        type="button"
+        class="auth-btn google-btn"
+        id="googleLoginBtn"
+      >
+        Continue with Google
+      </button>
+
+      <div
+        class="auth-message"
+        id="authMessage"
+      ></div>
+
+    </div>
+
+
+    <!-- LOGGED IN -->
+
+    <div
+      id="userArea"
+      style="display:none;"
+    >
+
+      <div class="user-info">
+
+        <div class="user-details">
+
+          <div class="user-label">
+            Logged in as
+          </div>
+
+          <div
+            class="user-email"
+            id="userEmail"
+          ></div>
+
+        </div>
+
+        <div class="user-buttons">
+
+          <button
+            type="button"
+            class="auth-btn logout-btn"
+            id="logoutBtn"
+          >
+            Log Out
+          </button>
+
+          <button
+            type="button"
+            class="auth-btn delete-account-btn"
+            id="deleteAccountBtn"
+          >
+            Delete Account
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
 
   </div>
 
